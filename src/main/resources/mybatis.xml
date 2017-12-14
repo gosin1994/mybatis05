@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--properties-->
+    <properties resource="jdbc.properties">
+    </properties>
+
+    <!--起别名-->
+    <typeAliases>
+        <!--给cn.itcast.mybatis.model.User取别名 -->
+        <!--<typeAlias type="cn.itcast.mybatis.model.User" alias="User" />-->
+        <!--  给一个包下的所有实体Bean全部取别名 别名名字为类的名字-->
+        <package name="cn.itcast.mybatis.domain" ></package>
+
+    </typeAliases>
+
+    <!--数据源配置-->
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"></transactionManager>
+            <dataSource type="UNPOOLED">
+                <property name="driver" value="${mysql.driver}"></property>
+                <property name="url" value="${mysql.url}"></property>
+                <!--<property name="username" value="${mysql.username}"></property>-->
+                <property name="username" value="${mysql.username}"></property>
+               <!-- <property name="password" value="${mysql.password}"></property>-->
+                <property name="password" value="${mysql.password}"></property>
+            </dataSource>
+        </environment>
+    </environments>
+
+
+    <!--映射文件指定-->
+    <mappers>
+        <!--直接指定映射文件路径-->
+       <!-- <mapper resource="cn/itcast/mybatis/mapper/UserMapper.xml" />-->
+        <package name="cn.itcast.mybatis.mapper" />
+    </mappers>
+
+</configuration>

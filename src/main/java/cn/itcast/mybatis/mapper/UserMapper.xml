@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.itcast.mybatis.mapper.UserMapper">
+    <!--UserResurtMap-->
+    <resultMap id="UserResultMap" type="User" >
+        <id column="userid" property="userid"/>
+        <result column="user_name" property="username"/>
+        <result column="userage" property="userage"/>
+    </resultMap>
+    <!--SQL片段-->
+    <sql id="UserColumnSelect" >
+        SELECT * FROM USER
+    </sql>
+    <!--getUserByName-->
+    <select id="getUserByName" parameterType="User" resultType="User">
+        SELECT * FROM user WHERE username LIKE CONCAT("%",#{username},"%")
+    </select>
+    <!--getUserByMap-->
+    <select id="getUserByMap" parameterType="map" resultMap="UserResultMap" >
+        SELECT * FROM user WHERE 1=1
+        <if test="user_name != null">
+            AND user_name LIKE CONCAT("%",#{user_name},"%")
+        </if>
+        <if test="userage != null" >
+            AND userage = #{userage}
+        </if>
+    </select>
+    <!--getUserCount-->
+    <select id="getUserCount" resultType="int">
+        SELECT COUNT(1) FROM user;
+    </select>
+    <!--getUserById-->
+    <select id="getUserById" parameterType="int" resultMap="UserResultMap">
+        SELECT * FROM user WHERE userid=#{userid}
+    </select>
+    <!--gatUserByCondition-->
+ <!--   <select id="getUserByCondition" parameterType="map" resultMap="UserResultMap">
+        SELECT * FROM user
+        <where>
+            <choose>
+                <when test="userid != null">
+                    AND userid = #{userid}
+                </when>
+                <otherwise>
+                    <if test="user_name != null">
+                        AND user_name LIKE CONCAT("%",#{user_name},"%")
+                    </if>
+                    <if test="userage != null">
+                        AND userage = #{userage}
+                    </if>
+                </otherwise>
+            </choose>
+        </where>
+    </select>-->
+    <select id="getUserByCondition" parameterType="map" resultMap="UserResultMap">
+        SELECT * FROM user
+        <trim prefixOverrides="OR|AND" prefix="WHERE">
+            <choose>
+                <when test="userid != null">
+                    AND userid = #{userid}
+                </when>
+                <otherwise>
+                    <if test="user_name != null">
+                        AND user_name LIKE CONCAT("%",#{user_name},"%")
+                    </if>
+                    <if test="userage != null">
+                        AND userage = #{userage}
+                    </if>
+                </otherwise>
+            </choose>
+        </trim>
+    </select>
+    <!--updateUserById-->
+    <update id="updateUserById" parameterType="User">
+        UPDATE user
+        <set>
+            <if test="username != null" >
+                user_name = #{username},
+            </if>
+            <if test="userage != null" >
+                userage = #{userage},
+            </if>
+        </set>
+        WHERE userid = #{userid}
+    </update>
+    <!--getUserByIdS-->
+    <!--SELECT * FROM user WHERE userid in(1,2,3,4,5)-->
+ <!--   <select id="getUserByIdS" parameterType="int" resultMap="UserResultMap">
+        SELECT * FROM user
+        <foreach collection="array" item="uid" open="WHERE userid in(" separator="," close=")">
+            #{uid}
+        </foreach>
+    </select>-->
+    <!--运用sql片段-->
+    <select id="getUserByIdS" parameterType="int" resultMap="UserResultMap">
+       /* SELECT * FROM user*/
+        <include refid="UserColumnSelect"/>
+        <foreach collection="array" item="uid" open="WHERE userid in(" separator="," close=")">
+            #{uid}
+        </foreach>
+    </select>
+</mapper>
